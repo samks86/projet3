@@ -282,7 +282,7 @@ footer nav ul {
 }
 
 .top-bar-design {
-	display: flex;
+	display: none;
 	justify-content: center;
 	background: #FFFFFF;
 	background-color: #000000;

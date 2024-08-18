@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("body").classList.add("connected");
     document.getElementById("visiteur").style.display = "none";
     document.getElementById("deconnecter").style.display = "inline";
-    document.getElementById("top-bar").style.display = "flex"
+    document.getElementById("top-bar").style.display = "none"
     document.querySelector(".all-filters").style.display = "none";
   }
 });
