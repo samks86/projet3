@@ -10,7 +10,7 @@ async function getWorks() {
     }
 
     projects = await response.json();
-    displayProjects(projects); 
+    displayProjects(projects);
     console.log("data", JSON.stringify(projects));
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -21,7 +21,7 @@ getWorks();
 // Fonction pour afficher les projets dans la galerie
 function displayProjects(projects) {
   const gallery = document.querySelector(".gallery");
-  gallery.innerHTML = ""; 
+  gallery.innerHTML = "";
 
   projects.forEach((project) => {
     const figure = document.createElement("figure");
@@ -93,12 +93,12 @@ function filterProjects(event) {
   const selectedCategoryId = event.target.dataset.categoryId;
 
   if (selectedCategoryId === "all") {
-    displayProjects(projects); 
+    displayProjects(projects);
   } else {
     const filteredProjects = projects.filter(
       (project) => project.categoryId == selectedCategoryId
     );
-    displayProjects(filteredProjects); 
+    displayProjects(filteredProjects);
   }
 }
 
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("body").classList.add("connected");
     document.getElementById("visiteur").style.display = "none";
     document.getElementById("deconnecter").style.display = "inline";
-    document.getElementById("top-bar").style.display = "none"
+    document.getElementById("top-bar").style.display = "none";
     document.querySelector(".all-filters").style.display = "none";
   }
 });
@@ -134,14 +134,14 @@ document
 
     // Mise à jour de l'apparence de la page après la déconnexion
     document.querySelector("body").classList.remove("connected");
-    document.getElementById("visiteur").style.display = "inline"; 
-    document.getElementById("deconnecter").style.display = "none"; 
+    document.getElementById("visiteur").style.display = "inline";
+    document.getElementById("deconnecter").style.display = "none";
     document.getElementById("update-works").style.display = "none";
     document.getElementById("top-bar").style.display = "none";
     // Réaffichage des filtres
     const filters = document.querySelector(".all-filters");
     if (filters) {
-      filters.style.display = "flex"; 
+      filters.style.display = "flex";
     }
 
     // Réinitialiser le padding inférieur de l'espace réservé à l'admin
@@ -258,13 +258,13 @@ function renderWorks() {
 function openSecondModalWindow() {
   document.getElementById("modal-works").style.display = "none";
   document.getElementById("modal-edit").style.display = "block";
-  populateCategories(); 
+  populateCategories();
 }
 
 // Remplir les catégories dans le formulaire
 async function populateCategories() {
   const categorySelect = document.getElementById("form-category");
-  categorySelect.innerHTML = ""; 
+  categorySelect.innerHTML = "";
   const categories = await fetchCategories();
 
   categories.forEach((category) => {
@@ -283,9 +283,9 @@ document.getElementById("update-works").addEventListener("click", (event) => {
 });
 
 ["modal-works", "modal-edit"].forEach((modalId) => {
-  document.getElementById(modalId).addEventListener("click", (event) =>
-    event.stopPropagation()
-  );
+  document
+    .getElementById(modalId)
+    .addEventListener("click", (event) => event.stopPropagation());
 });
 
 document.getElementById("modal").addEventListener("click", (event) => {
@@ -293,21 +293,19 @@ document.getElementById("modal").addEventListener("click", (event) => {
   closeModal();
 });
 
-document.getElementById("button-to-close-first-window").addEventListener(
-  "click",
-  (event) => {
+document
+  .getElementById("button-to-close-first-window")
+  .addEventListener("click", (event) => {
     event.preventDefault();
     closeModal();
-  }
-);
+  });
 
-document.getElementById("button-to-close-second-window").addEventListener(
-  "click",
-  (event) => {
+document
+  .getElementById("button-to-close-second-window")
+  .addEventListener("click", (event) => {
     event.preventDefault();
     closeModal();
-  }
-);
+  });
 
 document.getElementById("modal-edit-add").addEventListener("click", (event) => {
   event.preventDefault();
@@ -327,7 +325,9 @@ document.getElementById("form-image").addEventListener("change", () => {
   const maxFileSize = 4 * 1024 * 1024;
 
   if (fileInput.files[0].size > maxFileSize) {
-    alert("Le fichier sélectionné est trop volumineux. La taille maximale est de 4 Mo.");
+    alert(
+      "Le fichier sélectionné est trop volumineux. La taille maximale est de 4 Mo."
+    );
     fileInput.value = "";
   } else {
     const preview = document.createElement("img");
@@ -355,3 +355,36 @@ function checkNewProjectFields() {
 ["form-title", "form-category", "form-image"].forEach((id) => {
   document.getElementById(id).addEventListener("input", checkNewProjectFields);
 });
+document
+  .getElementById("modal-edit-work-form")
+  .addEventListener("submit", async function (event) {
+    event.preventDefault(); // Empêche le rechargement de la page
+
+    const formData = new FormData();
+    formData.append(
+      "title",
+      document.getElementById("form-title").value.trim()
+    );
+    formData.append("category", document.getElementById("form-category").value);
+    formData.append("image", document.getElementById("form-image").files[0]);
+
+    try {
+      const response = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("Travail ajouté avec succès");
+        closeModal();
+        renderWorks();
+      } else {
+        console.error("Erreur lors de l'ajout du travail");
+      }
+    } catch (err) {
+      console.error("Erreur réseau ou autre :", err);
+    }
+  });
